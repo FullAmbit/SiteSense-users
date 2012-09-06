@@ -405,16 +405,15 @@ function admin_usersBuild($data,$db) {
 				$data->output['userForm']->sendArray[':id']=$data->action[3];
 			}
 			$result = $statement->execute($data->output['userForm']->sendArray);
-			
 			if($result == FALSE) {
 				$data->output['savedOkMessage'] = 'There was an error in saving to the database';
 				return;
 			}
-			
 			$id = $db->lastInsertId();
-			$profileAlbum = $db->prepare('addAlbum', 'gallery');
-			$profileAlbum->execute(array(':userId' => $id, ':name' => 'Profile Pictures', ':shortName' => 'profile-pictures', 'allowComments' => 0));
-			
+			if (isset($data->output['moduleShortName']['gallery'])){
+				$profileAlbum = $db->prepare('addAlbum', 'gallery');
+				$profileAlbum->execute(array(':userId' => $id, ':name' => 'Profile Pictures', ':shortName' => 'profile-pictures', 'allowComments' => 0));
+			}
 			if (empty($data->output['secondSidebar'])) {
 				$data->output['savedOkMessage']='
 					<h2>'.$data->phrases['users']['saveUserSuccessMessage'].' - <em>'.$data->output['userForm']->sendArray[':name'].'</em></h2>
