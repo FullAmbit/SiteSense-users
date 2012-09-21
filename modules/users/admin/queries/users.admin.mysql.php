@@ -82,6 +82,9 @@ function admin_users_addQueries() {
             SELECT userID from !prefix!activations
             WHERE expires <= :expireTime
         ',
+		'getAllActivations' => '
+			SELECT * FROM !prefix!activations
+		',
         'searchUsers' => '
 			SELECT *,
 			UNIX_TIMESTAMP(CONCAT(registeredDate,"+00:00")) AS registeredDate,

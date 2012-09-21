@@ -240,7 +240,7 @@ function theme_groupDeleteDefault($data) {
 			</fieldset>
 		</form>';
 }
-function theme_usersActivationNone() {
+function theme_usersActivationNone($data) {
 	echo '<p>',$data->phrases['users']['noActivationsFound'],'</p>';
 }
 

@@ -34,14 +34,6 @@ function admin_usersBuild($data,$db) {
 		$data->output['userListStart']=0;
 	} else if (is_numeric($data->action[3])) {
 		$data->output['userListStart']=$data->action[3];
-	} else if ($data->action[3]=='staff') {
-		$staff=true;
-		$data->output['forceMenu']='users/list/staff';
-		if (empty($data->action[4])) {
-			$data->output['userListStart']=0;
-		} else if (is_numeric($data->action[4])) {
-			$data->output['userListStart']=$data->action[4];
-		}
 	} else {
 		$data->output['abort']=true;
 		$data->output['abortMessage']='
@@ -53,11 +45,7 @@ function admin_usersBuild($data,$db) {
 		$data->output['userListLimit']=ADMIN_SHOWPERPAGE;
 		$data->output['userListCount']=0;
 		try {
-			if ($staff) {
-				$statement=$db->prepare('getListLimitedStaff','admin_users');
-			} else {
-				$statement=$db->prepare('getListLimited','admin_users');
-			}
+			$statement=$db->prepare('getListLimited','admin_users');
 			$statement->bindParam(':start',$data->output['userListStart'],PDO::PARAM_INT);
 			$statement->bindParam(':count',$data->output['userListLimit'],PDO::PARAM_INT);
 			$statement->execute();

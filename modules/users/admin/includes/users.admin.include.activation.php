@@ -44,16 +44,14 @@ function admin_usersBuild($data,$db) {
 	if (empty($data->output['abort'])) {
 		$data->output['userListLimit']=ADMIN_SHOWPERPAGE;
 		$data->output['userListCount']=0;
-		$statement=$db->prepare('getListActivations','admin_users');
-		$statement->bindParam(':start',$data->output['userListStart'],PDO::PARAM_INT);
-		$statement->bindParam(':count',$data->output['userListLimit'],PDO::PARAM_INT);
+		$statement=$db->prepare('getAllActivations','admin_users');
 		$statement->execute();
 		$data->output['userList']=$statement->fetchAll();
 	}
 }
 function admin_usersShow($data) {
 	if(empty($data->output['userList'])){
-		theme_usersActivationNone();
+		theme_usersActivationNone($data);
 	}else{
 		theme_usersActivationTableHead($data);
 		foreach($data->output['userList'] as $key => $user) {
