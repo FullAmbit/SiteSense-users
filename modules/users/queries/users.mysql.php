@@ -165,7 +165,15 @@ function users_addQueries() {
 				(userId,name,value)
 			VALUES
 				(:userId,:name,:value)
-		'
+		',
+		// Login
+		'checkPassword' => '
+			SELECT *,
+			UNIX_TIMESTAMP(CONCAT(registeredDate,"+00:00")) AS registeredDate,
+			UNIX_TIMESTAMP(CONCAT(lastAccess,"+00:00")) AS lastAccess FROM !prefix!users
+			WHERE name = :name
+			AND password = :passphrase
+		',
 	);
 }
 ?>

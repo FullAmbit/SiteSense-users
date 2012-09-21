@@ -163,93 +163,182 @@ function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us")
 			':submitTitle' => 'Register Now',
 			':api' => 0
 		));
-		$formId = $db->lastInsertId();
+		$registerFormId = $db->lastInsertId();
+		$statement->execute(array(
+			':enabled' => 1,
+			':shortName' => 'login',
+			':name' => 'Login',
+			':title' => 'Log in',
+			':rawContentBefore' => '',
+			':parsedContentBefore' => '',
+			':rawContentAfter' => '',
+			':parsedContentAfter' => '',
+			':rawSuccessMessage' => 'You are now logged in.',
+			':parsedSuccessMessage' => 'You are now logged in.',
+			':requireLogin' => 0,
+			':topLevel' => 1,
+			':eMail' => '',
+			':submitTitle' => 'Log In',
+			':api' => 0
+		));
+		$loginFormId = $db->lastInsertId();
 		// Create Fields
 		$fields = array(
-			'username' => array(
-				':form' => $formId,
-				':name' => 'Username',
-				':type' => 'textbox',
-				':description' => '',
-				':enabled' => 1,
-				':required' => 1,
-				':moduleHook' => 'users',
-				':apiFieldToMapTo' => NULL,
-				':sortOrder' => 1,
-				':isEmail' => 0,
-				':compareTo' => 0
-			),
-			'password' => array(
-				':form' => $formId,
-				':name' => 'Password',
-				':type' => 'password',
-				':description' => '',
-				':enabled' => 1,
-				':required' => 1,
-				':moduleHook' => 'users',
-				':apiFieldToMapTo' => NULL,
-				':sortOrder' => 2,
-				':isEmail' => 0,
-				':compareTo' => 0
-			),
 			'firstName' => array(
-				':form' => $formId,
+				':form' => $registerFormId,
 				':name' => 'First Name',
 				':type' => 'textbox',
 				':description' => '',
 				':enabled' => 1,
 				':required' => 1,
-				':moduleHook' => 'users',
+				':moduleHook' => 'users.register',
 				':apiFieldToMapTo' => NULL,
-				':sortOrder' => 3,
+				':sortOrder' => 1,
 				':isEmail' => 0,
 				':compareTo' => 0
 			),
 			'lastName' => array(
-				':form' => $formId,
+				':form' => $registerFormId,
 				':name' => 'Last Name',
 				':type' => 'textbox',
 				':description' => '',
 				':enabled' => 1,
 				':required' => 1,
-				':moduleHook' => 'users',
+				':moduleHook' => 'users.register',
+				':apiFieldToMapTo' => NULL,
+				':sortOrder' => 2,
+				':isEmail' => 0,
+				':compareTo' => 0
+			),
+			'username' => array(
+				':form' => $registerFormId,
+				':name' => 'Desired Username',
+				':type' => 'textbox',
+				':description' => '',
+				':enabled' => 1,
+				':required' => 1,
+				':moduleHook' => 'users.register',
+				':apiFieldToMapTo' => NULL,
+				':sortOrder' => 3,
+				':isEmail' => 0,
+				':compareTo' => 0
+			),
+			'password' => array(
+				':form' => $registerFormId,
+				':name' => 'Password',
+				':type' => 'password',
+				':description' => '',
+				':enabled' => 1,
+				':required' => 1,
+				':moduleHook' => 'users.register',
 				':apiFieldToMapTo' => NULL,
 				':sortOrder' => 4,
 				':isEmail' => 0,
 				':compareTo' => 0
 			),
 			'contactEMail' => array(
-				':form' => $formId,
+				':form' => $registerFormId,
 				':name' => 'Contact EMail',
 				':type' => 'textbox',
 				':description' => '',
 				':enabled' => 1,
 				':required' => 1,
-				':moduleHook' => 'users',
+				':moduleHook' => 'users.register',
 				':apiFieldToMapTo' => NULL,
-				':sortOrder' => 5,
+				':sortOrder' => 6,
 				':isEmail' => 1,
 				':compareTo' => 0
 			),
 			'timeZone' => array(
-				':form' => $formId,
+				':form' => $registerFormId,
 				':name' => 'Time Zone',
 				':type' => 'timezone',
 				':description' => '',
 				':enabled' => 1,
 				':required' => 1,
-				':moduleHook' => 'users',
+				':moduleHook' => 'users.register',
 				':apiFieldToMapTo' => NULL,
-				':sortOrder' => 6,
+				':sortOrder' => 8,
+				':isEmail' => 0,
+				':compareTo' => 0
+			),
+			'loginUsername' => array(
+				':form' => $loginFormId,
+				':name' => 'Username',
+				':type' => 'textbox',
+				':description' => '',
+				':enabled' => 1,
+				':required' => 1,
+				':moduleHook' => 'users.login',
+				':apiFieldToMapTo' => NULL,
+				':sortOrder' => 1,
+				':isEmail' => 0,
+				':compareTo' => 0
+			),
+			'loginPassword' => array(
+				':form' => $loginFormId,
+				':name' => 'Password',
+				':type' => 'password',
+				':description' => '',
+				':enabled' => 1,
+				':required' => 1,
+				':moduleHook' => 'users.login',
+				':apiFieldToMapTo' => NULL,
+				':sortOrder' => 2,
+				':isEmail' => 0,
+				':compareTo' => 0
+			),
+			'loginKeep' => array(
+				':form' => $loginFormId,
+				':name' => 'Keep me logged in',
+				':type' => 'checkbox',
+				':description' => '',
+				':enabled' => 1,
+				':required' => 0,
+				':moduleHook' => 'users.login',
+				':apiFieldToMapTo' => NULL,
+				':sortOrder' => 3,
 				':isEmail' => 0,
 				':compareTo' => 0
 			)
 		);
+		$fieldIds=array();
 		$statement = $db->prepare('newField','admin_dynamicForms',array('!lang!'=>'_en_us'));
 		foreach($fields as $fieldShortName => $fieldVars){
 			$statement->execute($fieldVars);
+			$fieldIds[$fieldShortName]=$db->lastInsertId();
 		}
-		
+		$fields=array(
+			'retypeContactEMail' => array(
+				':form' => $registerFormId,
+				':name' => 'Retype EMail',
+				':type' => 'textbox',
+				':description' => '',
+				':enabled' => 1,
+				':required' => 1,
+				':moduleHook' => 'users.register',
+				':apiFieldToMapTo' => NULL,
+				':sortOrder' => 7,
+				':isEmail' => 1,
+				':compareTo' => $fieldIds['contactEMail'],
+			),
+			'retypePassword' => array(
+				':form' => $registerFormId,
+				':name' => 'Retype Password',
+				':type' => 'password',
+				':description' => '',
+				':enabled' => 1,
+				':required' => 1,
+				':moduleHook' => 'users.register',
+				':apiFieldToMapTo' => NULL,
+				':sortOrder' => 5,
+				':isEmail' => 0,
+				':compareTo' => $fieldIds['password'],
+			),
+		);
+		foreach($fields as $fieldShortName => $fieldVars){
+			$statement->execute($fieldVars);
+		}
 		// Insert URL Remap For Registration
 		common_include('libraries/admin.common.php');
 		$statement = $db->prepare('insertUrlRemap','admin_urls');
@@ -261,7 +350,22 @@ function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us")
 			':regex' => 0,
 			':sortOrder' => $db->countRows('urls')+1
 		));
-		
+		$statement->execute(array(
+			':match' => '^login(/.*)?$',
+			':replace' => 'dynamic-forms/login/\1',
+			':hostname' => '',
+			':isRedirect' => 1,
+			':regex' => 0,
+			':sortOrder' => $db->countRows('urls')+1
+		));
+		$statement->execute(array(
+			':match' => '^users/login(/.*)?$',
+			':replace' => 'dynamic-forms/login/\1',
+			':hostname' => '',
+			':isRedirect' => 0,
+			':regex' => 0,
+			':sortOrder' => $db->countRows('urls')+1
+		));
 		// Generate an admin account if this is a fresh installation
 		if ($db->countRows('users')==0) {
 			try {

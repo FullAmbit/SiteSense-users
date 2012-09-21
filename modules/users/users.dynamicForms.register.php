@@ -178,7 +178,7 @@ function sendActivationEMail($data,$db,$userId,$hash,$sendToEmail) {
     } else {
         $data->output['messages'][]='
 			<p>
-				'.$data->phrases['users']['activationEmailDeleted'].'
+				Activation e-mail has been deleted! Please contact the administrator.
 			</p>
 		';
     }
