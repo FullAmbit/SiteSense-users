@@ -23,6 +23,12 @@
 * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 */
 
+function users_beforeForm($data,$db){
+	if(isset($data->user['id'])&&$data->user['id']!==0){
+		common_redirect_local($data,'');
+	}
+}
+
 function users_validateDynamicFormField($data,$db,$field,$fieldValue){	
 	$fieldRef =& $data->output['customForm']->fields[$field['id']];
 	$formError =& $data->output['customForm']->error;
@@ -36,7 +42,7 @@ function users_validateusername($data,$db,$field,$fieldValue){
 	if($data->getUserIdByName($fieldValue)) {
 		$formError = true;
     	$fieldRef['error']=true;
-    	$fieldRef['errorList'][]=$data->phrases['users']['nameAlreadyExists'];
+    	$fieldRef['errorList'][]='That username already exists.';
     }
 }
 
@@ -70,23 +76,23 @@ function users_savepassword($data,$db,$field,$fieldName,$fieldValue){
 // Add Seperate Field Data (Catch-All Function)
 function users_saveDynamicFormField($data,$db,$field,$fieldName,$fieldValue){	
 	$userColumns = array(
-		'username',
-		'password',
-		'firstName',
-		'lastName',
-		'contactEMail',
-		'publicEMail',
-		'timeZone'
+		'username'=>'username',
+		'password'=>'password',
+		'first_name'=>'firstName',
+		'last_name'=>'lastName',
+		'contact_email'=>'contactEMail',
+		'public_email'=>'publicEMail',
+		'time_zone'=>'timeZone'
 	);
-	if(in_array($fieldName,$userColumns)){
+	if(isset($userColumns[$fieldName])){
 		// In Users Table
-		$statement = $db->prepare('updateUserField','users',array('!column1!' => $fieldName));
+		$statement = $db->prepare('updateUserField','users',array('!column1!' => $userColumns[$fieldName]));
 		$r=$statement->execute(array(
 			':name' => $data->user['name'],
 			':fieldValue' => $fieldValue
 		));
-	}else{
-		// Not Part of Users Table
+	}elseif(strtolower($field['type'])!=='password'&&!$field['compareTo']){
+		// Not Part of Users Table, not a password field or a "retype X" field
 		$statement = $db->prepare('addDynamicUserField','users');
 		$statement->execute(array(
 			':userId' => $data->user['id'],

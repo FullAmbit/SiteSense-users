@@ -109,7 +109,7 @@ function users_getUniqueSettings($data){
 function users_buildContent($data,$db) {
     populateTimeZones($data);
     switch($data->action[1]){
-		case 'edit':
+		/*case 'edit':
 			// Check If Logged In
 			if(!isset($data->user['id'])){
 				common_redirect_local($data, 'users/login/');
@@ -136,9 +136,6 @@ function users_buildContent($data,$db) {
 					' . _common_timedRedirect($data->linkRoot . 'users/');
                     }
                 } else {
-                    /*
-                  invalid data, so we want to show the form again
-                 */
                     $data->output['secondSidebar']='
 					<h2>'.$data->phrases['users']['errorInData'].'</h2>
 					<p>
@@ -170,7 +167,6 @@ function users_buildContent($data,$db) {
                                     );
                                     break;
                                 case 'password':
-                                    /* NEVER SEND PASSWORD TO A FORM!!! */
                                     break;
                                 default:
                                     $data->output['userForm']->fields[$key]['value']=$item[$key];
@@ -179,67 +175,12 @@ function users_buildContent($data,$db) {
                     }
                 }
             }
-		break;
+		break;*/
 		case 'register':
-            if(isset($data->user['id'])) {
-                common_redirect_local($data,'default');
-            }
-            require_once('libraries/forms.php');
-            $data->output['registerForm']=new formHandler('register',$data);
-            $data->output['showForm']=true;
-            $data->output['messages']=array();
-            if(isset($_POST['fromForm'])&&($_POST['fromForm']==$data->output['registerForm']->fromForm)) {
-                $data->output['registerForm']->populateFromPostData();
-                if($data->output['registerForm']->validateFromPost()) {
-                    if($data->getUserIdByName($data->output['registerForm']->sendArray[':name'])) {
-                        $data->output['registerForm']->fields['name']['error']='true';
-                        $data->output['registerForm']->fields['name']['errorList'][]=$data->phrases['users']['nameExists'];
-                    } else {
-                        unset($data->output['registerForm']->sendArray[':password2']);
-                        unset($data->output['registerForm']->sendArray[':verifyEMail']);
-                        $data->output['registerForm']->sendArray[':registeredIP']=$_SERVER['REMOTE_ADDR'];
-                        $data->output['registerForm']->sendArray[':publicEMail']='';
-                        $data->output['registerForm']->sendArray[':emailVerified']=($data->settings['verifyEmail'] == 1) ? 0 : 1;
-                        $data->output['registerForm']->sendArray[':password']=hash(
-                            'sha256',
-                            $data->output['registerForm']->sendArray[':password']
-                        );
-                        $statement=$db->prepare('insertUser','users');
-                        $statement->execute($data->output['registerForm']->sendArray) or die('Saving user failed');
-                        $userId = $db->lastInsertId();
-                        $hash=md5(common_randomPassword(32,32));
-                        // Insert into group
-                        if($data->settings['defaultGroup']!==0) {
-							$statement=$db->prepare('addUserToPermissionGroupNoExpires');
-							$statement->execute(array(
-								':userID'          => $userId,
-								':groupName'       => $data->settings['defaultGroup']
-							));
-                        }
-                        // Do We Require E-Mail Verification??
-                        if($data->settings['verifyEmail'] == 1) {
-                            $statement=$db->prepare('insertActivationHash','users');
-                            $statement->execute(array(
-                                ':userId' => $userId,
-                                ':hash' => $hash,
-                                ':expires' => date('Y-m-d H:i:s',(time()+(14*24*360)))
-                            ));
-                            sendActivationEMail($data,$db,$userId,$hash,$data->output['registerForm']->sendArray[':contactEMail']);
-                        } else if($data->settings['requireActivation'] == 0) {
-                            $data->output['messages'][]='
-                                            <p>
-                                                '.$data->phrases['users']['accountRegistered'].'
-                                                <a href="'.$data->linkRoot.'login">'.$data->phrases['users']['clickLogin'].'</a>
-                                            </p>';
-                        } else if($data->settings['requireActivation'] == 1) {
-                            $data->output['messages'][]='
-                                            <p>
-                                                '.$data->phrases['users']['awaitingApproval'].'
-                                            </p>';
-                        }
-                        $data->output['showForm']=false;
-                    }
-                }
+            if(isset($data->user['id'])){
+                common_redirect_local($data,'');
+            }elseif(empty($data->action[2])){
+				common_redirect_local($data,'dynamic-forms/register');
             } else {
                 switch ($data->action[2]) {
                     case 'activate':
@@ -311,7 +252,7 @@ function users_buildContent($data,$db) {
 }
 function users_content($data){
 	switch($data->action[1]){
-		case 'edit':
+		/*case 'edit':
 			if(isset($data->output['savedOkMessage'])) {
 				echo $data->output['savedOkMessage'];
 			} else {
@@ -320,25 +261,15 @@ function users_content($data){
 				theme_buildForm($data->output['userForm']);
 				theme_contentBoxFooter();
 			}
-		break;
-        case 'login':
-            theme_contentBoxHeader($data->phrases['users']['userLogin']);
-            $data->loadModuleTemplate('users');
-            theme_loginForm($data);
-            theme_contentBoxFooter();
-        break;
+		break;*/
         case 'logout':
         break;
         case 'register':
-        	if ($data->output['showForm']) {
-        		$data->output['registerForm']->build();
-        	} else {
-	        	theme_contentBoxHeader($data->phrases['users']['accountRegistrationActivation']);
-	        	foreach ($data->output['messages'] as $message) {
-		        	echo '<p>',$message,'</p>';
-		        }
-		        theme_contentBoxFooter();
-		    }
+			theme_contentBoxHeader($data->phrases['users']['accountRegistrationActivation']);
+			foreach ($data->output['messages'] as $message) {
+				echo '<p>',$message,'</p>';
+			}
+			theme_contentBoxFooter();
         break;
 	}
 }

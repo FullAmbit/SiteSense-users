@@ -193,7 +193,7 @@ function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us")
 				':required' => 1,
 				':moduleHook' => 'users.register',
 				':apiFieldToMapTo' => NULL,
-				':sortOrder' => 1,
+				':sortOrder' => 2,
 				':isEmail' => 0,
 				':compareTo' => 0
 			),
@@ -206,20 +206,20 @@ function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us")
 				':required' => 1,
 				':moduleHook' => 'users.register',
 				':apiFieldToMapTo' => NULL,
-				':sortOrder' => 2,
+				':sortOrder' => 3,
 				':isEmail' => 0,
 				':compareTo' => 0
 			),
 			'username' => array(
 				':form' => $registerFormId,
-				':name' => 'Desired Username',
+				':name' => 'Username',
 				':type' => 'textbox',
 				':description' => '',
 				':enabled' => 1,
 				':required' => 1,
 				':moduleHook' => 'users.register',
 				':apiFieldToMapTo' => NULL,
-				':sortOrder' => 3,
+				':sortOrder' => 1,
 				':isEmail' => 0,
 				':compareTo' => 0
 			),
