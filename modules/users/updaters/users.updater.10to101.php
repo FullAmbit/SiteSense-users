@@ -1,5 +1,20 @@
 <?php
 function admin_users_updater_10_101($data,$db){
+	$statement=$db->prepare('getFormByShortName','admin_dynamicForms',array('!lang!'=>'_en_us'));
+	$statement->execute(array(
+		':shortName' => 'register',
+	));
+	$oldForm=$statement->fetch(PDO::FETCH_ASSOC);
+	if($oldForm){
+		$statement=$db->prepare('deleteForm','admin_dynamicForms',array('!lang!'=>'_en_us'));
+		$statement->execute(array(
+			':id' => $oldForm['id'],
+		));
+		$statement=$db->prepare('deleteFieldsByForm','admin_dynamicForms',array('!lang!'=>'_en_us'));
+		$statement->execute(array(
+			':id' => $oldForm['id'],
+		));
+	}
 	$statement = $db->prepare('newForm','admin_dynamicForms',array('!lang!'=>'_en_us'));
 	$statement->execute(array(
 		':enabled' => 1,
