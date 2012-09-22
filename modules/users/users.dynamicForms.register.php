@@ -111,6 +111,7 @@ function users_afterForm($data,$db){
 	$userItem = $statement->fetch(PDO::FETCH_ASSOC);
 	// Do We Require E-Mail Verification??
 	if($data->settings['verifyEmail'] == 1) {
+		common_include('modules/users/users.module.php'); // for sendActivationEMail()
         $hash=md5(common_randomPassword(32,32));
 		$statement=$db->prepare('insertActivationHash','users');
 		$statement->execute(array(

@@ -64,11 +64,6 @@ function sendActivationEMail($data,$db,$userId,$hash,$sendToEmail) {
             ),
             $mailBody
         );
-        $subject=$data->settings['siteTitle'].' Activation Link';
-        $header='From: Account Activation - '.$data->settings['siteTitle'].'<'.$data->settings['register']['sender'].">\r\n".
-            'Reply-To: '.$data->settings['register']['sender']."\r\n".
-            'X-Mailer: PHP/'.phpversion()."\r\n".
-            'Content-Type: text/html';
         $content='<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
 "http://www.w3.org/TR/html4/strict.dtd">
 <html><head>
@@ -81,14 +76,16 @@ function sendActivationEMail($data,$db,$userId,$hash,$sendToEmail) {
 	  		'.$data->phrases['users']['activationLink1'].$sendToEmail.$data->phrases['users']['activationLink2'].'
 	  	</p>
 	  ';
-        if (mail(
-            $sendToEmail,
-            $subject,
-            $content,
-            $header
-        )) {
+        if (common_sendMail($data,$db,
+				$sendToEmail,
+				$data->settings['siteTitle'].' Activation Link',
+				$content,
+				NULL,
+				'Content-Type: text/html'."\r\n")){
             return true;
-        } else die('A Fatal error occurred in the mail subsystem');
+        }else{
+			die('A fatal error occurred in the mail subsystem.');
+		}
     } else {
         $data->output['messages'][]='
 			<p>
