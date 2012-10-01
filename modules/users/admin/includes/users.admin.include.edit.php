@@ -103,7 +103,8 @@ function admin_usersBuild($data,$db) {
 
     // Add core control panel access permission
     $data->permissions['core']=array(
-        'access'        => 'Control panel access'
+        'access'        => 'Control panel access',
+		'superadmin'    => 'Superadmin Access (!)'
     );
     
     // Get User Permissions

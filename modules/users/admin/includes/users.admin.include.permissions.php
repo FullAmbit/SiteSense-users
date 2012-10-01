@@ -38,7 +38,8 @@ function admin_usersBuild($data,$db) {
         if($data->action[4]=='add') { //Add a new Group
             // Add core control panel access permission
             $data->permissions['core']=array(
-                'access'        => 'Control panel access'
+                'access'        => 'Control panel access',
+				'superadmin'    => 'Superadmin Access (!)'
             );
             $data->output['permissionGroup']=new formHandler('permissionGroup',$data,true);
             

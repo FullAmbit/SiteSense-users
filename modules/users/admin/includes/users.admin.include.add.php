@@ -74,7 +74,8 @@ function admin_usersBuild($data, $db) {
 
 	// Add core control panel access permission
     $data->permissions['core']=array(
-        'access'        => 'Control panel access'
+        'access'        => 'Control panel access',
+		'superadmin'    => 'Superadmin Access (!)'
     );
 	// Poulate Time Zone List
 	populateTimeZones($data);
