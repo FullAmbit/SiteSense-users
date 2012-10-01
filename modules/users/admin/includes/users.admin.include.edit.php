@@ -66,28 +66,7 @@ function admin_usersBuild($data,$db) {
         $data->output['abortMessage']='<h2>'.$data->phrases['core']['accessDeniedHeading'].'</h2>'.$data->phrases['core']['accessDeniedMessage'];
         return;
     }
-    /**
-    // Admin check
-    $admin=false;
-    $statement=$db->prepare('getGroupsByUserID');
-    $statement->execute(array(
-        ':userID'   => $data->action[3]
-    ));
-    $groups=$statement->fetchAll();
-    foreach($groups as $group) {
-        if($group['groupName']=='Administrators') {
-            $admin=true;
-        }
-    }
-    if($admin) {
-        // Admins can only edit themselves
-        if($data->user['id']!==$data->action[3]) {
-            $data->output['abort'] = true;
-            $data->output['abortMessage'] = '<h2>Insufficient User Permissions</h2>You do not have the permissions to access this area.';
-            return;
-        }
-    }**/
-    
+
     // Load all groups
     $db->query('purgeExpiredGroups');
     $statement=$db->query('getAllGroups','admin_users');
@@ -103,8 +82,7 @@ function admin_usersBuild($data,$db) {
 
     // Add core control panel access permission
     $data->permissions['core']=array(
-        'access'        => 'Control panel access',
-		'superadmin'    => 'Superadmin Access (!)'
+        'access'        => 'Control panel access'
     );
     
     // Get User Permissions

@@ -26,7 +26,7 @@ function users_settings() {
 	return array(
 		'name'      => 'users',
 		'shortName' => 'users',
-		'version'   => '1.0.2'
+		'version'   => '1.0.1'
 	);
 }
 function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us") {
