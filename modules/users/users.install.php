@@ -128,22 +128,38 @@ function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us")
 			),
 			'User' => array(
 				'users_access'
-			)
+			),
 		);
+		$statement=$db->prepare('addPermissionByGroupName');
 		foreach ($defaultPermissionGroups as $groupName => $permissions) {
-			foreach ($permissions as $permissionName) {
-				$statement=$db->prepare('addPermissionByGroupName');
-				$statement->execute(
-					array(
+			foreach ($permissions as $permissionName) {	
+				$statement->execute(array(
 						':groupName' => $groupName,
 						':permissionName' => $permissionName,
 						':value' => '1'
-					)
-				);
+				));
 			}
 		}
-		// ---
-		
+		class psuedoData{
+			var $permissions=array('core'=>array('access','permissions')),$admin=array();
+		}
+		$psuedo=new psuedoData();
+		$adminConfigs=glob('modules/*/admin/*.config.php');
+		foreach($adminConfigs as $configFile){
+			common_include($configFile);
+			$configFile=explode('/',$configFile);
+			@call_user_func_array($configFile[1].'_admin_config',array($psuedo,$db));
+		}
+		foreach($psuedo->permissions as $groupName=>$permissions){
+			foreach($permissions as $permissionName => $value){
+				$statement->execute(array(
+						':groupName' => 'Admin',
+						':permissionName' => $groupName.'_'.$permissionName,
+						':value' => '1'
+				));
+			}
+		}
+		//var_dump($psuedo);die();
 		// Create Dynamic-Registration Form
 		$statement = $db->prepare('newForm','admin_dynamicForms',array('!lang!'=>'_en_us'));
 		$statement->execute(array(
