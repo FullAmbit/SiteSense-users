@@ -30,7 +30,6 @@ function users_settings() {
 	);
 }
 function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us") {
-
 	if($firstInstall){
 		$structures = array(
 			'activations' => array(
@@ -155,11 +154,15 @@ function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us")
 				$statement->execute(array(
 						':groupName' => 'Admin',
 						':permissionName' => $groupName.'_'.$permissionName,
-						':value' => '1'
+						':value' => '1',
+				));
+				$statement->execute(array(
+						':groupName' => 'Banned',
+						':permissionName' => $groupName.'_'.$permissionName,
+						':value' => '-1',
 				));
 			}
 		}
-		//var_dump($psuedo);die();
 		// Create Dynamic-Registration Form
 		$statement = $db->prepare('newForm','admin_dynamicForms',array('!lang!'=>'_en_us'));
 		$statement->execute(array(
@@ -415,4 +418,3 @@ function users_uninstall($db) {
 	$db->dropTable('user_group_permissions');
 	$db->dropTable('user_permissions');
 }
-?>
