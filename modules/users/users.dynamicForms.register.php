@@ -144,7 +144,7 @@ function sendActivationEMail($data,$db,$userId,$hash,$sendToEmail) {
     $statement=$db->prepare('getRegistrationEMail','users');
     $statement->execute();
     if ($mailBody=$statement->fetchColumn()) {
-        $mailBody = htmlspecialchars_decode($mailBody);
+        $mailBody = html_entity_decode($mailBody,ENT_QUOTES,'UTF-8');
         $activationLink='http://'.$_SERVER['SERVER_NAME'].$data->linkRoot.'users/register/activate/'.$userId.'/'.$hash;
         $mailBody=str_replace(
             array(
