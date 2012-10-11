@@ -47,54 +47,6 @@ function populateTimeZones($data) {
         }
     }
 }
-function sendActivationEMail($data,$db,$userId,$hash,$sendToEmail) {
-    $statement=$db->prepare('getRegistrationEMail','users');
-    $statement->execute();
-    if ($mailBody=$statement->fetchColumn()) {
-        $mailBody = html_entity_decode($mailBody,ENT_QUOTES,'UTF-8');
-        $activationLink='http://'.$_SERVER['SERVER_NAME'].$data->linkRoot.'users/register/activate/'.$userId.'/'.$hash;
-        $mailBody=str_replace(
-            array(
-                '$siteName',
-                '$registerLink'
-            ),
-            array(
-                $data->settings['siteTitle'],
-                '<a href="'.$activationLink.'">'.$activationLink.'</a>'
-            ),
-            $mailBody
-        );
-        $content='<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-"http://www.w3.org/TR/html4/strict.dtd">
-<html><head>
-<title>'.$data->phrases['users']['activateAccountPageTitle'].'</title>
-</head><body>
-'.$mailBody.'
-</body></html>';
-        $data->output['messages'][]='
-	  	<p>
-	  		'.$data->phrases['users']['activationLink1'].$sendToEmail.$data->phrases['users']['activationLink2'].'
-	  	</p>
-	  ';
-        if (common_sendMail($data,$db,
-				$sendToEmail,
-				$data->settings['siteTitle'].' Activation Link',
-				$content,
-				NULL,
-				'Content-Type: text/html'."\r\n")){
-            return true;
-        }else{
-			die('A fatal error occurred in the mail subsystem.');
-		}
-    } else {
-        $data->output['messages'][]='
-			<p>
-				'.$data->phrases['users']['activationEmailDeleted'].'
-			</p>
-		';
-    }
-    return false;
-}
 function checkUserName($name,$db) {
 	$statement=$db->prepare('checkUserName','users');
 	$statement->execute(array(':name' => $name));
