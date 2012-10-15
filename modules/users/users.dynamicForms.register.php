@@ -121,7 +121,14 @@ function users_afterForm($data,$db){
 		));
 		sendActivationEMail($data,$db,$userItem['id'],$hash,$userItem['contactEMail']);
 	}
-	
+	if(!empty($data->settings['users']['sendConfirmation'])){
+		common_loadPhrases($data,$db,'users');
+		if(isset($data->phrases['users']['thanksForRegisterSubject'])&&isset($data->phrases['users']['thanksForRegisterContent'])){
+			common_sendMail($data,$db,$userItem['contactEMail'],
+				$data->phrases['users']['thanksForRegisterSubject'],
+				$data->phrases['users']['thanksForRegisterContent']);
+		}
+	}
 	// Insert into group
 	if($data->settings['defaultGroup']!==0) {
 		$statement=$db->prepare('addUserToPermissionGroupNoExpires');
@@ -191,4 +198,3 @@ function sendActivationEMail($data,$db,$userId,$hash,$sendToEmail) {
     }
     return false;
 }
-?>

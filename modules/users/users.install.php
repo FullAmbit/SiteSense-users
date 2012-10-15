@@ -408,6 +408,12 @@ function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us")
 			}
 		} else echo '<p class="exists">"users database" already contains records</p>';
 	}
+	$statement=$db->prepare('addSetting','installer',array('!lang!'=>'_en_us'));
+	$statement->execute(array(
+		':name'     => 'sendConfirmation',
+		':category' => 'users',
+		':value'    => '0',
+	));
 }
 function users_uninstall($db) {
 	$db->dropTable('activations');
