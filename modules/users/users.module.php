@@ -196,7 +196,14 @@ function users_buildContent($data,$db) {
                     break; // case 'activate'
                 }
             }
-	    break; // case 'register'
+			break; // case 'register'
+		case 'logout':
+			setcookie($db->sessionPrefix.'SESSID', '', 0, $data->linkHome);
+			$statement=$db->prepare('logoutSession');
+			$statement->execute(array(
+				':sessionID' => $_COOKIE[$db->sessionPrefix.'SESSID']
+		    ));
+			break;
 	}
 }
 function users_content($data){
@@ -212,14 +219,16 @@ function users_content($data){
 			}
 		break;*/
         case 'logout':
-        break;
+			theme_contentBoxHeader($data->phrases['users']['logout']);
+			echo '<p>'.$data->phrases['users']['loggedOut'].'</p>';
+			theme_contentBoxFooter();
+			break;
         case 'register':
 			theme_contentBoxHeader($data->phrases['users']['accountRegistrationActivation']);
 			foreach ($data->output['messages'] as $message) {
 				echo '<p>',$message,'</p>';
 			}
 			theme_contentBoxFooter();
-        break;
+			break;
 	}
 }
-?>

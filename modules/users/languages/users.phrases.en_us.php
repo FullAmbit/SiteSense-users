@@ -23,6 +23,7 @@ function languages_users_en_us(){
 		'userLogin'                     => 'User Login',
 		'accountRegistrationActivation' => 'Account Registration &amp; Activation',
 		'logout'                        => 'Log Out',
+		'loggedOut'                     => 'You have been logged out.',
 		'alreadyLoggingAs'              => 'You are already logged in as ',
 		'successfulLogin'               => 'You have successfully logged in.',
         'keepMeLoggedIn'                => 'Keep me Logged in:',
