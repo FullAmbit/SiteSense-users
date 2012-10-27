@@ -149,6 +149,10 @@ function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us")
 			$configFile=explode('/',$configFile);
 			@call_user_func_array($configFile[1].'_admin_config',array($psuedo,$db));
 		}
+		$psuedo->permissions['core']=array(
+			'permissions',
+			'access'
+		);
 		foreach($psuedo->permissions as $groupName=>$permissions){
 			foreach($permissions as $permissionName => $value){
 				$statement->execute(array(
