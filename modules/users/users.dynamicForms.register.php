@@ -128,6 +128,27 @@ function users_afterForm($data,$db){
 				$data->phrases['users']['thanksForRegisterSubject'],
 				$data->phrases['users']['thanksForRegisterContent']);
 		}
+	}else{
+		$user=$data->user=$userItem;
+		if (!empty($user['timeZone']) && $user['timeZone']!==0) {
+			date_default_timezone_set($user['timeZone']);
+			ini_set('date.timezone', $user['timeZone']);
+		}
+		getUserPermissions($db, $user);
+		$userCookieValue = hash('sha256',$user['id'].'|'.time().'|'.common_randomPassword(32, 64));
+		$statement=$db->query('userSessionTimeOut');
+		$data->settings['userSessionTimeOut'] = $statement->fetchColumn();
+		$expires=time()+$data->settings['userSessionTimeOut'];
+		setcookie($db->sessionPrefix.'SESSID',$userCookieValue,$expires,$data->linkHome,'','',true);
+		$expires=gmdate("Y-m-d H:i:s", $expires);
+		$statement=$db->prepare('updateUserSession');
+		$statement->execute(array(
+			':sessionId' => $userCookieValue,
+			':userId'    => $user['id'],
+			':expires'   => $expires,
+			':ipAddress' => $_SERVER['REMOTE_ADDR'],
+			':userAgent' => $_SERVER['HTTP_USER_AGENT']
+		));
 	}
 	// Insert into group
 	if($data->settings['defaultGroup']!==0) {

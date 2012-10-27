@@ -50,7 +50,7 @@ function users_afterForm($data,$db){
 			$user['id'].'|'.time().'|'.common_randomPassword(32, 64)
 		);
 		// Push expiration ahead
-		$statement=$db->query("userSessionTimeOut");
+		$statement=$db->query('userSessionTimeOut');
 		$data->settings['userSessionTimeOut'] = $statement->fetchColumn();
 		$expires=time()+$data->settings['userSessionTimeOut'];
 		if(isset($fieldValues['keep me logged in'])&&$fieldValues['keep me logged in']=='on'){
