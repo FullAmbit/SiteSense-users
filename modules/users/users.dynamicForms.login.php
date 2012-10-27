@@ -3,6 +3,9 @@ function users_beforeForm($data,$db){
 	if(isset($data->user['id'])&&$data->user['id']!==0){
 		common_redirect_local($data,'');
 	}
+	if(isset($data->action[2])){
+		setcookie($db->sessionPrefix.'from',$data->action[2],time()+$data->settings['userSessionTimeOut'],$data->linkHome,'','',true);
+	}
 }
 function users_validateDynamicFormField($data,$db,$fieldItem,$fieldValue){
 	if($fieldItem['name']=='Username'){
@@ -67,13 +70,9 @@ function users_afterForm($data,$db){
 			':ipAddress' => $_SERVER['REMOTE_ADDR'],
 			':userAgent' => $_SERVER['HTTP_USER_AGENT']
 		));
-		if($_SERVER['HTTP_REFERER']){
-			$referer=parse_url($_SERVER['HTTP_REFERER'],PHP_URL_QUERY);
-			$refererElements=array();
-			$referer=parse_str($referer,$refererElements);
-			if(!empty($refererElements['from'])){
-				common_redirect_local($data,$refererElements['from']);
-			}
+		if(!empty($_COOKIE[$db->sessionPrefix.'from'])){
+			setcookie($db->sessionPrefix.'from','',time()-3600,$data->linkHome,'','',true);
+			common_redirect_local($data,$_COOKIE[$db->sessionPrefix.'from']);
 		}
 		return TRUE;
 	}
