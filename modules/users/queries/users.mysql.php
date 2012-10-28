@@ -166,6 +166,19 @@ function users_addQueries() {
 			VALUES
 				(:userId,:name,:value)
 		',
+		'getDynamicUserField' => '
+			SELECT * FROM !prefix!users_dynamic_fields
+			WHERE userId = :userId
+			  AND name   = :name
+			LIMIT 1
+		',
+		'updateDynamicUserField' => '
+			UPDATE !prefix!users_dynamic_fields
+			SET value = :value
+			WHERE userId = :userId
+			  AND name   = :name
+			LIMIT 1
+		',
 		// Login
 		'checkPassword' => '
 			SELECT *,
@@ -176,4 +189,3 @@ function users_addQueries() {
 		',
 	);
 }
-?>

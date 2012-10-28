@@ -43,7 +43,16 @@ function users_loadDynamicFormFieldValue($data,$db,$field){
 	if(isset($userColumns[common_generateShortName($field['name'],TRUE)])){
 		return $data->user[$userColumns[common_generateShortName($field['name'],TRUE)]];
 	}else{
-		return '';
+		$statement=$db->prepare('getDynamicUserField','users');
+		$statement->execute(array(
+			':userId' => $data->user['id'],
+			':name'   => common_generateShortName($field['name'],TRUE),
+		));
+		if($out=$statement->fetch(PDO::FETCH_ASSOC)){
+			return $out['value'];
+		}else{
+			return '';
+		}
 	}
 }
 function users_validateDynamicFormField($data,$db,$field,$fieldValue){	
@@ -94,8 +103,16 @@ function users_saveDynamicFormField($data,$db,$field,$fieldName,$fieldValue){
 			':fieldValue' => htmlentities($fieldValue,ENT_QUOTES,'UTF-8'),
 		));
 	}elseif(strtolower($field['type'])!=='password'&&!$field['compareTo']){
-		// Not Part of Users Table, not a password field or a "retype X" field
-		$statement = $db->prepare('addDynamicUserField','users');
+		$statement=$db->prepare('getDynamicUserField','users');
+		$statement->execute(array(
+			':userId' => $data->user['id'],
+			':name'   => common_generateShortName($field['name'],TRUE),
+		));
+		if($out=$statement->fetch(PDO::FETCH_ASSOC)){ //update
+			$statement = $db->prepare('updateDynamicUserField','users');
+		}else{ //add
+			$statement = $db->prepare('addDynamicUserField','users');
+		}
 		$statement->execute(array(
 			':userId' => $data->user['id'],
 			':name' => $fieldName,
