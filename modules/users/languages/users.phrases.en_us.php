@@ -51,6 +51,8 @@ function languages_users_en_us(){
 		'registrationAgreement'         => 'registration agreement',
 		'thanksForRegisterSubject'      => 'Thank you for registering!',
 		'thanksForRegisterContent'      => 'Thank you for signing up for an account here.',
+		'requiresLogin'                 => 'You must be logged in to %s.',
+		'updateProfile'                 => 'update your profile',
 	);
 }
 ?>

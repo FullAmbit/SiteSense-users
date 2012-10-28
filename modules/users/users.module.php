@@ -52,79 +52,11 @@ function checkUserName($name,$db) {
 	$statement->execute(array(':name' => $name));
 	return $statement->fetchColumn();
 }
-function users_getUniqueSettings($data){
-	$data->output['pageShortName']='SiteSense';
-}
 function users_buildContent($data,$db) {
     populateTimeZones($data);
     switch($data->action[1]){
-		/*case 'edit':
-			// Check If Logged In
-			if(!isset($data->user['id'])){
-				common_redirect_local($data, 'users/login/');
-			}
-            $data->output['userForm'] = new formHandler('edit', $data);
-            if ((!empty($_POST['fromForm'])) && ($_POST['fromForm']==$data->output['userForm']->fromForm)){
-                $data->output['userForm']->populateFromPostData();
-                if ($data->output['userForm']->validateFromPost()) {
-                    unset($data->output['userForm']->sendArray[':password2']);
-                    if ($data->output['userForm']->sendArray[':password']=='') {
-                        $statement=$db->prepare('updateUserByIdNoPw','users');
-                        unset($data->output['userForm']->sendArray[':password']);
-                        $data->output['userForm']->sendArray[':id']=$data->user['id'];
-                    } else {
-                        $data->output['userForm']->sendArray[':password']=hash('sha256',$data->output['userForm']->sendArray[':password']);
-                        $statement=$db->prepare('updateUserById','users');
-                        $data->output['userForm']->sendArray[':id']=$data->user['id'];
-                    }
-                    $statement->execute($data->output['userForm']->sendArray);
-                    if (empty($data->output['secondSidebar'])) {
-                        $data->output['savedOkMessage']='
-						<h2>'.$data->phrases['users']['userDetailsSaved'].'</h2>
-						<p>'.$data->phrases['users']['beRedirectedShortly'].'</p>
-					' . _common_timedRedirect($data->linkRoot . 'users/');
-                    }
-                } else {
-                    $data->output['secondSidebar']='
-					<h2>'.$data->phrases['users']['errorInData'].'</h2>
-					<p>
-						'.$data->phrases['users']['validationError'].'
-					</p>';
-                    if ($data->output['userForm']->sendArray[':password'] != $data->output['userForm']->sendArray[':password2']) {
-                        $data->output['secondSidebar'].='
-					<p>
-						<strong>'.$data->phrases['users']['passwordMismatch'].'</strong>
-					</p>';
-                        $data->output['userForm']->fields['password']['error']=true;
-                        $data->output['userForm']->fields['password2']['error']=true;
-                    }
-                }
-            } else {
-                $data->output['userForm']->caption=$data->phrases['users']['editingUserDetails'];
-                $statement=$db->prepare('getById','users');
-                $statement->execute(array(
-                    ':id' => $data->user['id']
-                ));
-                if (false !== ($item = $statement->fetch())) {
-                    foreach ($data->output['userForm']->fields as $key => $value) {
-                        if (empty($value['params']['type'])){
-                            $value['params']['type'] = '';
-                            switch ($value['params']['type']) {
-                                case 'checkbox':
-                                    $data->output['userForm']->fields[$key]['checked']=(
-                                    $item[$key] ? 'checked' : ''
-                                    );
-                                    break;
-                                case 'password':
-                                    break;
-                                default:
-                                    $data->output['userForm']->fields[$key]['value']=$item[$key];
-                            }
-                        }
-                    }
-                }
-            }
-		break;*/
+		case 'edit':
+			common_redirect_local($data,'dynamic-forms/edit-profile');
 		case 'register':
             if(isset($data->user['id'])){
                 common_redirect_local($data,'');

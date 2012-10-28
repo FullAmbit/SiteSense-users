@@ -89,7 +89,7 @@ function users_saveDynamicFormField($data,$db,$field,$fieldName,$fieldValue){
 		$statement = $db->prepare('updateUserField','users',array('!column1!' => $userColumns[$fieldName]));
 		$r=$statement->execute(array(
 			':name' => $data->user['name'],
-			':fieldValue' => $fieldValue
+			':fieldValue' => htmlentities($fieldValue,ENT_QUOTES,'UTF-8'),
 		));
 	}elseif(strtolower($field['type'])!=='password'&&!$field['compareTo']){
 		// Not Part of Users Table, not a password field or a "retype X" field
@@ -97,7 +97,7 @@ function users_saveDynamicFormField($data,$db,$field,$fieldName,$fieldValue){
 		$statement->execute(array(
 			':userId' => $data->user['id'],
 			':name' => $fieldName,
-			':value' => $fieldValue
+			':value' => htmlentities($fieldValue,ENT_QUOTES,'UTF-8'),
 		));
 	}
 }

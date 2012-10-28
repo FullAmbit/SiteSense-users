@@ -205,6 +205,24 @@ function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us")
 			':api' => 0
 		));
 		$loginFormId = $db->lastInsertId();
+		$statement->execute(array(
+			':enabled' => 1,
+			':shortName' => 'edit-profile',
+			':name' => 'Edit Profile',
+			':title' => 'Update your Profile',
+			':rawContentBefore' => '',
+			':parsedContentBefore' => '',
+			':rawContentAfter' => '',
+			':parsedContentAfter' => '',
+			':rawSuccessMessage' => 'Your profile has been updated.',
+			':parsedSuccessMessage' => 'Your profile has been updated.',
+			':requireLogin' => 1,
+			':topLevel' => 1,
+			':eMail' => '',
+			':submitTitle' => 'Save Changes',
+			':api' => 0
+		));
+		$profileFormId = $db->lastInsertId();
 		// Create Fields
 		$fields = array(
 			'firstName' => array(
@@ -330,6 +348,17 @@ function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us")
 		foreach($fields as $fieldShortName => $fieldVars){
 			$statement->execute($fieldVars);
 			$fieldIds[$fieldShortName]=$db->lastInsertId();
+			if($fieldVars[':moduleHook']==='users.register'){
+				$statement->execute(
+					array(
+						':form'      => $profileFormId,
+						':moduleHook'=> 'users.profile',
+						':required'  => 0,
+						':isEmail'   => 0,
+					)+$fieldVars
+				);
+				$fieldIds['profile-'.$fieldShortName]=$db->lastInsertId();
+			}
 		}
 		$fields=array(
 			'retypeContactEMail' => array(
@@ -361,6 +390,16 @@ function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us")
 		);
 		foreach($fields as $fieldShortName => $fieldVars){
 			$statement->execute($fieldVars);
+			if($fieldShortName==='retypePassword'){
+				$statement->execute(
+					array(
+						':form'      => $profileFormId,
+						':compareTo' => $fieldIds['profile-password'],
+						':moduleHook'=> 'users.profile',
+						':required'  => 0,
+					)+$fieldVars
+				);
+			}
 		}
 		// Insert URL Remap For Registration
 		common_include('libraries/admin.common.php');
