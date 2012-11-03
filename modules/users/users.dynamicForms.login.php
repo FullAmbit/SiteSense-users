@@ -3,8 +3,8 @@ function users_beforeForm($data,$db){
 	if(isset($data->user['id'])&&$data->user['id']!==0){
 		common_redirect_local($data,'');
 	}
-	if(isset($data->action[2])){
-		setcookie($db->sessionPrefix.'from',$data->action[2],time()+$data->settings['userSessionTimeOut'],$data->linkHome,'','',true);
+	if(!empty($data->action[3])){
+		setcookie($db->sessionPrefix.'from',$data->action[3],time()+3600*72,$data->linkHome);
 	}
 }
 function users_validateDynamicFormField($data,$db,$fieldItem,$fieldValue){
