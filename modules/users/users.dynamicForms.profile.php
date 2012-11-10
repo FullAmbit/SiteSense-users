@@ -62,9 +62,10 @@ function users_validateDynamicFormField($data,$db,$field,$fieldValue){
 function users_validateusername($data,$db,$field,$fieldValue){
 	$fieldRef =& $data->output['customForm']->fields[$field['id']];
 	$formError =& $data->output['customForm']->error;
-	
+	$statement=$db->prepare('checkUserName','users');
+	$statement->execute(array(':name' => $fieldValue));
 	// Check If UserName Exists...
-	if($data->getUserIdByName($fieldValue)&&$fieldValue!==$data->user['name']) {
+	if($statement->fetch(PDO::FETCH_ASSOC)&&$fieldValue!==$data->user['name']) {
 		$formError = true;
     	$fieldRef['error']=true;
     	$fieldRef['errorList'][]='That username already exists.';
