@@ -41,6 +41,7 @@ function users_afterForm($data,$db){
 			':name'   => 'recoveryHash',
 			':value'  => $hash,
 		));
+		common_loadPhrases($data,$db,'users');
 		common_sendMail($data,$db,$email,'Password Recovery',
 			$data->phrases['users']['recoverPassword'].PHP_EOL.
 			$data->domainName.$data->linkRoot.'users/recover/'.$hash);
