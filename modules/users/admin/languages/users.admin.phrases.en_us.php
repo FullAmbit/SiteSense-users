@@ -101,7 +101,8 @@ function languages_users_admin_en_us(){
 		'labelBanBanTime'                       => 'Ban Time',
 		'labelBanBanTimeUnit'                   => 'Time Unit',
 		'labelBanBanEmail'                      => 'E-Mail Address',
-		'labelBanBanIP'                         => 'IP Address'
+		'labelBanBanIP'                         => 'IP Address',
+		'dynamicUserFields'                     => 'Dynamic User Fields',
 	);
 }
 ?>

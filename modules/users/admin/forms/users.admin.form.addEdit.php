@@ -169,6 +169,16 @@ $this->fields=array(
         'options' => $data->output['timeZones']
     )
 );
+if(!empty($data->output['userFields'])){
+	foreach($data->output['userFields'] as $field){
+		$this->fields['custom_'.$field['name']]=array(
+			'label'     => ucwords(str_replace('_',' ',$field['name'])),
+			'tag'       => 'input',
+			'group'     => $data->phrases['users']['dynamicUserFields'],
+			'value'     => $field['value'],
+		);
+	}
+}
 foreach($data->output['groupList'] as $value) {
     if(checkPermission($value['groupName'],'manageGroups',$data)) {
         $checked='';

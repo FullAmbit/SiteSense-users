@@ -151,6 +151,11 @@ function admin_usersBuild($data,$db) {
 	    
     // Poulate Time Zone List
     populateTimeZones($data);
+	$statement=$db->prepare('getDynamicUserFields','admin_users');
+    $statement->execute(array(
+        ':userId' => $data->action[3]
+    ));
+	$data->output['userFields']=$statement->fetchAll(PDO::FETCH_ASSOC);
     $data->output['userForm']=$form=new formHandler('addEdit',$data,true);
 
     $statement=$db->prepare('getById','admin_users');
@@ -368,11 +373,21 @@ function admin_usersBuild($data,$db) {
 			unset($data->output['userForm']->sendArray[':registeredDate']);
 			unset($data->output['userForm']->sendArray[':registeredIP']);
 			unset($data->output['userForm']->sendArray[':lastAccess']);
-
             unset($data->output['userForm']->sendArray[':id_hidden']);
             unset($data->output['userForm']->sendArray[':registeredDate_hidden']);
             unset($data->output['userForm']->sendArray[':registeredIP_hidden']);
             unset($data->output['userForm']->sendArray[':lastAccess_hidden']);
+			$statement=$db->prepare('updateDynamicUserField','admin_users');
+			foreach($data->output['userForm']->sendArray as $key => $value){ // update custom fields
+				if(substr($key,0,8)===':custom_'){
+					$statement->execute(array(
+						':userId' => $data->action[3],
+						':name'   => substr($key,8),
+						':value'  => $value,
+					));
+					unset($data->output['userForm']->sendArray[$key]);
+				}
+			}
 			/* existing user, from form, must be save existing */
             if ($_POST['viewUser_password']=='') {
                 $statement=$db->prepare('updateUserByIdNoPw','admin_users');

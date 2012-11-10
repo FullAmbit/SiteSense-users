@@ -174,7 +174,17 @@ function admin_users_addQueries() {
         'removeGroupFromUsersPermission_groups' => '
 			DELETE FROM !prefix!user_groups
 			WHERE groupName = :groupName
-		'
+		',
+		'getDynamicUserFields' => '
+			SELECT * FROM !prefix!users_dynamic_fields
+			WHERE userId = :userId
+		',
+		'updateDynamicUserField' => '
+			UPDATE !prefix!users_dynamic_fields
+			SET value = :value
+			WHERE name = :name AND userId = :userId
+			LIMIT 1
+		',
 	);
 }
 ?>
