@@ -53,6 +53,9 @@ function languages_users_en_us(){
 		'thanksForRegisterContent'      => 'Thank you for signing up for an account here.',
 		'requiresLogin'                 => 'You must be logged in to %s.',
 		'updateProfile'                 => 'update your profile',
+		'recoverPassword'               => 'You or somebody impersonating you requested a password recovery for your account. If you did not request a password recovery, please ignore this email. Otherwise, follow the link below to send a replacement password to this email address.',
+		'newPassword'                   => 'As requested, here is the new password to your account. You should change it as soon as possible.',
+		'newPasswordSent'               => 'A new password has been sent to the email address on file.',
 	);
 }
 ?>

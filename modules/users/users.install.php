@@ -72,10 +72,11 @@ function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us")
 				'defaultLanguage'     => 'VARCHAR(64) NOT NULL DEFAULT ""'
 			),
 			'users_dynamic_fields' => array(
-				'id'                  => SQR_ID,
+				'id'                  => SQR_IDKey,
 				'userId'              => SQR_ID,
 				'name'                => 'VARCHAR(255) NOT NULL',
-				'value'               => 'VARCHAR(255) NOT NULL'
+				'value'               => 'VARCHAR(255) NOT NULL',
+				'UNIQUE KEY (`name`,`userId`)'
 			),
 			'user_groups' => array(
 				'userID'              => SQR_ID,
@@ -223,6 +224,24 @@ function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us")
 			':api' => 0
 		));
 		$profileFormId = $db->lastInsertId();
+		$statement->execute(array(
+			':enabled' => 1,
+			':shortName' => 'recover-password',
+			':name' => 'Recover Password',
+			':title' => 'Recover Your Password',
+			':rawContentBefore' => '',
+			':parsedContentBefore' => '',
+			':rawContentAfter' => '',
+			':parsedContentAfter' => '',
+			':rawSuccessMessage' => 'An email has been sent to the contact address on file for that account with further instructions.',
+			':parsedSuccessMessage' => 'An email has been sent to the contact address on file for that account with further instructions.',
+			':requireLogin' => 0,
+			':topLevel' => 1,
+			':eMail' => '',
+			':submitTitle' => 'Proceed',
+			':api' => 0
+		));
+		$recoveryFormId = $db->lastInsertId();
 		// Create Fields
 		$fields = array(
 			'firstName' => array(
@@ -341,7 +360,20 @@ function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us")
 				':sortOrder' => 3,
 				':isEmail' => 0,
 				':compareTo' => 0
-			)
+			),
+			'recoveryUsername' => array(
+				':form' => $recoveryFormId,
+				':name' => 'Your Username',
+				':type' => 'textbox',
+				':description' => '',
+				':enabled' => 1,
+				':required' => 1,
+				':moduleHook' => 'users.recover',
+				':apiFieldToMapTo' => 'username',
+				':sortOrder' => 1,
+				':isEmail' => 0,
+				':compareTo' => 0
+			),
 		);
 		$fieldIds=array();
 		$statement = $db->prepare('newField','admin_dynamicForms',array('!lang!'=>'_en_us'));

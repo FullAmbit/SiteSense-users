@@ -55,6 +55,49 @@ function checkUserName($name,$db) {
 function users_buildContent($data,$db) {
     populateTimeZones($data);
     switch($data->action[1]){
+		case 'recover':
+			if($data->action[2]){
+				$statement=$db->prepare('getRecoveryUser','users');
+				$statement->execute(array(
+					':hash' => $data->action[2]
+				));
+				$user=$statement->fetch(PDO::FETCH_ASSOC);
+				if($user){
+					// generate pass
+					$len=mt_rand(8,12);
+					$i=0;
+					$pass='';
+					while($i<$len){
+						$r=rand(0,2);
+						if($r===0) {
+							$inty=mt_rand(65,90);
+						}elseif($r===1) {
+							$inty=mt_rand(48,57);
+						} else {
+							$inty=mt_rand(97,122);
+						}
+						$i++;
+						$pass.=chr($inty);
+					}
+					common_sendMail($data,$db,(empty($user['contactEMail'])?$user['publicEMail']:$user['contactEMail']),'Your New Password',
+						$data->phrases['users']['newPassword'].PHP_EOL.
+						$data->phrases['users']['username'].' '.$user['name'].PHP_EOL.
+						$data->phrases['users']['password'].' '.$pass);
+					$statement=$db->prepare('updateUserField','users',array('!column1!'=>'password'));
+					$statement->execute(array(
+						':fieldValue' => hash('sha256',$pass),
+						':name'       => $user['name'],
+					));
+					$statement=$db->prepare('deleteDynamicUserField','users');
+					$statement->execute(array(
+						':userId' => $user['id'],
+						':name'   => 'recoveryHash',
+					));
+				}
+			}else{
+				common_redirect_local($data,'dynamic-forms/recover-password');
+			}
+			break;
 		case 'edit':
 			common_redirect_local($data,'dynamic-forms/edit-profile');
 		case 'register':
@@ -161,6 +204,9 @@ function users_content($data){
 				echo '<p>',$message,'</p>';
 			}
 			theme_contentBoxFooter();
+			break;
+		case 'recover':
+			echo '<p>',$data->phrases['users']['newPasswordSent'],'</p>';
 			break;
 	}
 }

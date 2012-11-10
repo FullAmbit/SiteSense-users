@@ -165,6 +165,7 @@ function users_addQueries() {
 				(userId,name,value)
 			VALUES
 				(:userId,:name,:value)
+			ON DUPLICATE KEY UPDATE value = :value
 		',
 		'getDynamicUserField' => '
 			SELECT * FROM !prefix!users_dynamic_fields
@@ -172,11 +173,22 @@ function users_addQueries() {
 			  AND name   = :name
 			LIMIT 1
 		',
+		'deleteDynamicUserField' => '
+			DELETE FROM !prefix!users_dynamic_fields
+			WHERE userId = :userId AND name = :name
+			LIMIT 1
+		',
 		'updateDynamicUserField' => '
 			UPDATE !prefix!users_dynamic_fields
 			SET value = :value
 			WHERE userId = :userId
 			  AND name   = :name
+			LIMIT 1
+		',
+		'getRecoveryUser' => '
+			SELECT u.* FROM !prefix!users_dynamic_fields AS dF
+			RIGHT JOIN !prefix!users AS u ON (dF.userId=u.id)
+			WHERE dF.name = "recoveryHash" AND dF.value = :hash
 			LIMIT 1
 		',
 		// Login
