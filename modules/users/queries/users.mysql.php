@@ -22,10 +22,6 @@
 * @copyright  Copyright (c) 2011 Full Ambit Media, LLC (http://www.fullambit.com)
 * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 */
-/*
-	!table! = $tableName
-	!prefix! = dynamicPDO::tablePrefix
-*/
 function users_addQueries() {
 	return array(
 		'getAllUsers' => '
@@ -122,29 +118,16 @@ function users_addQueries() {
         'updateEmailVerification' => '
 			UPDATE !prefix!users SET emailVerified = 1 WHERE id = :userId
 		',
-		'getNameById' => '
-			SELECT
-				name
-			FROM
-				!prefix!users 
-			WHERE
-				id = :userId
-			LIMIT 1
-		',
 		'createUserRow' => '
-			INSERT INTO
-				!prefix!users 
-				(name)
-			VALUES
-				(:name)
+			INSERT INTO !prefix!users 
+			       (name)
+			VALUES (:name)
 		',
 		'updateUserField' => '
-			UPDATE
-				!prefix!users 
-			SET 
-				!column1! = :fieldValue 
-			WHERE
-				name = :name
+			UPDATE !prefix!users 
+			SET    !column1! = :fieldValue 
+			WHERE  name = :name
+			LIMIT 1
 		',
 		'updateIPDateAndAccess' => '
 			UPDATE
