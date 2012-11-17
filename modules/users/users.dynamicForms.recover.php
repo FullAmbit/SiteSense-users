@@ -1,22 +1,27 @@
 <?php
 function users_beforeForm($data,$db){
 	if(isset($data->user['id'])&&$data->user['id']!==0){
-		common_redirect_local($data,'');
+		$data->output['responseMessage']='You are logged in, you may not recover a password.';
+		return FALSE;
 	}
 }
 function users_validateDynamicFormField($data,$db,$fieldItem,$fieldValue){
-	if($fieldItem['apiFieldToMapTo']==='username'){
-		$fieldValues=array();
-		$data->output['username']=$fieldValue; // don't tell user if username exists - disclosure of user information, however, insignificant, is a no-no
-	}
+	$data->output['recover'][$fieldItem['apiFieldToMapTo']]=$fieldValue;
 }
 function users_saveDynamicFormField($data,$db,$fieldName,$fieldValue){
 }
 function users_afterForm($data,$db){
-	$statement=$db->prepare('getByName','users');
-	$statement->execute(array(
-		':name' => $data->output['username'],
-	));
+	if(isset($data->output['recover']['username'])){
+		$statement=$db->prepare('getByName','users');
+		$statement->execute(array(
+			':name' => $data->output['recover']['username'],
+		));
+	}elseif(isset($data->output['recover']['email'])){
+		$statement=$db->prepare('getByEmail','users');
+		$statement->execute(array(
+			':email' => $data->output['recover']['email'],
+		));
+	}
 	$user=$statement->fetch(PDO::FETCH_ASSOC);
 	if($user&&(!empty($user['contactEMail'])||!empty($user['publicEMail']))){
 		if(isset($user['contactEMail'])){

@@ -35,14 +35,10 @@ function users_addQueries() {
 			FROM !prefix!users ORDER BY id ASC
 		',
 		'getByName' => '
-			SELECT
-				*,
-				UNIX_TIMESTAMP(CONCAT(registeredDate,"+00:00")) AS registeredDate,
+			SELECT *, UNIX_TIMESTAMP(CONCAT(registeredDate,"+00:00")) AS registeredDate,
 				UNIX_TIMESTAMP(CONCAT(lastAccess,"+00:00")) AS lastAccess
-			FROM
-				!prefix!users 
-			WHERE
-				name = :name
+			FROM !prefix!users 
+			WHERE name = :name
 		',
 		'getById' => '
 			SELECT *,
@@ -51,10 +47,13 @@ function users_addQueries() {
 			FROM !prefix!users
 			WHERE id = :id
 		',
+		'getByEmail' => '
+			SELECT * FROM !prefix!users
+			WHERE publicEMail = :email OR contactEMail = :email
+		',
 		'updateUserByIdNoPw' => '
 			UPDATE !prefix!users
-			SET
-				firstName = :firstName,
+			SET firstName = :firstName,
 				lastName = :lastName,
 				contactEMail = :contactEMail,
 				publicEMail = :publicEMail
@@ -62,8 +61,7 @@ function users_addQueries() {
 		',
 		'updateUserById' => '
 			UPDATE !prefix!users
-			SET
-				firstName = :firstName,
+			SET firstName = :firstName,
 				lastName = :lastName,
 				password = :password,
 				contactEMail = :contactEMail,
@@ -82,19 +80,17 @@ function users_addQueries() {
         // Register
         'insertUser' => '
 			INSERT INTO !prefix!users
-			(name, password, firstName, lastName, registeredIP, lastAccess, contactEMail, publicEMail, emailVerified, timeZone)
-			VALUES
-			(:name,:password,:firstName,:lastName,:registeredIP,CURRENT_TIMESTAMP,:contactEMail,:publicEMail,:emailVerified,:timeZone)
+			       (name, password, firstName, lastName, registeredIP, lastAccess, contactEMail, publicEMail, emailVerified, timeZone)
+			VALUES (:name,:password,:firstName,:lastName,:registeredIP,CURRENT_TIMESTAMP,:contactEMail,:publicEMail,:emailVerified,:timeZone)
 		',
         'getRegistrationEMail' => '
 			SELECT parsedContent FROM !prefix!pages
-			WHERE shortName = \'registration-email\'
+			WHERE shortName = "registration-email"
 		',
         'insertActivationHash' => '
-			INSERT INTO !prefix!activations
-			(userId,hash,expires)
-			VALUES
-			(:userId,:hash,:expires)
+			INSERT INTO !prefix!activations 
+			       (userId,hash,expires)
+			VALUES (:userId,:hash,:expires)
 		',
         'getExpiredActivations' => '
 			SELECT userID from !prefix!activations

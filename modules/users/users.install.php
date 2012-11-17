@@ -140,6 +140,7 @@ function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us")
 				));
 			}
 		}
+		// This code loads all the permissions from the config files to create the Admin and Banned usergroups.
 		class psuedoData{
 			var $permissions=array('core'=>array('access','permissions')),$admin=array();
 		}
@@ -363,15 +364,15 @@ function users_install($db, $drop=false, $firstInstall = FALSE, $lang = "en_us")
 			),
 			'recoveryUsername' => array(
 				':form' => $recoveryFormId,
-				':name' => 'Your Username',
+				':name' => 'Email Address',
 				':type' => 'textbox',
 				':description' => '',
 				':enabled' => 1,
 				':required' => 1,
 				':moduleHook' => 'users.recover',
-				':apiFieldToMapTo' => 'username',
+				':apiFieldToMapTo' => 'email',
 				':sortOrder' => 1,
-				':isEmail' => 0,
+				':isEmail' => 1,
 				':compareTo' => 0
 			),
 		);
