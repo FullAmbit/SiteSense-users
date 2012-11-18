@@ -63,22 +63,7 @@ function users_buildContent($data,$db) {
 				));
 				$user=$statement->fetch(PDO::FETCH_ASSOC);
 				if($user){
-					// generate pass
-					$len=mt_rand(8,12);
-					$i=0;
-					$pass='';
-					while($i<$len){
-						$r=rand(0,2);
-						if($r===0) {
-							$inty=mt_rand(65,90);
-						}elseif($r===1) {
-							$inty=mt_rand(48,57);
-						} else {
-							$inty=mt_rand(97,122);
-						}
-						$i++;
-						$pass.=chr($inty);
-					}
+					$pass=common_randomPassword();
 					common_sendMail($data,$db,(empty($user['contactEMail'])?$user['publicEMail']:$user['contactEMail']),'Your New Password',
 						$data->phrases['users']['newPassword'].PHP_EOL.
 						$data->phrases['users']['username'].' '.$user['name'].PHP_EOL.
@@ -183,16 +168,6 @@ function users_buildContent($data,$db) {
 }
 function users_content($data){
 	switch($data->action[1]){
-		/*case 'edit':
-			if(isset($data->output['savedOkMessage'])) {
-				echo $data->output['savedOkMessage'];
-			} else {
-				theme_contentBoxHeader($data->phrases['users']['editingUser']);
-				//theme_EditSettings($data);
-				theme_buildForm($data->output['userForm']);
-				theme_contentBoxFooter();
-			}
-		break;*/
         case 'logout':
 			theme_contentBoxHeader($data->phrases['users']['logout']);
 			echo '<p>'.$data->phrases['users']['loggedOut'].'</p>';
