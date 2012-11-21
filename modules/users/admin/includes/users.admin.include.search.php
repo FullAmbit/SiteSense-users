@@ -51,7 +51,6 @@ function admin_usersBuild($data,$db) {
 	}
 }
 function admin_usersShow($data) {
-	global $languageText;
 	theme_buildForm($data->output['userForm']);
 	if($data->output['userList'] !== false){
 		theme_usersSearchTableHead($data);
