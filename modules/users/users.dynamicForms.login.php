@@ -63,6 +63,7 @@ function users_afterForm($data,$db){
 		}
 		// Update and sync cookie to server values
 		setcookie($db->sessionPrefix.'SESSID', $userCookieValue, $expires, $data->linkHome, '', '', true);
+		setcookie($db->sessionPrefix.'from','',time()-3600,$data->linkHome,'','',true);
 		$expires=gmdate("Y-m-d H:i:s", $expires);
 		$statement=$db->prepare('updateUserSession');
 		$statement->execute(array(
