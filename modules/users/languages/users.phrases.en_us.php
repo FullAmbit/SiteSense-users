@@ -56,6 +56,7 @@ function languages_users_en_us(){
 		'recoverPassword'               => 'You or somebody impersonating you requested a password recovery for your account. If you did not request a password recovery, please ignore this email. Otherwise, follow the link below to send a replacement password to this email address.',
 		'newPassword'                   => 'As requested, here is the new password to your account. You should change it as soon as possible.',
 		'newPasswordSent'               => 'A new password has been sent to the email address on file.',
+		'cantLoggedIn'                  => 'You can\'t do this while logged in.',
 	);
 }
 ?>

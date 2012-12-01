@@ -25,7 +25,9 @@
 
 function users_beforeForm($data,$db){
 	if(isset($data->user['id'])&&$data->user['id']!==0){
-		common_redirect_local($data,'');
+		common_loadPhrases($data,$db,'users');
+		$data->output['responseMessage']=$data->phrases['users']['cantLoggedIn'];
+		return FALSE;
 	}
 }
 

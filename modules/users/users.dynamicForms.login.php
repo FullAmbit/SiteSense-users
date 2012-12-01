@@ -1,7 +1,9 @@
 <?php
 function users_beforeForm($data,$db){
 	if(isset($data->user['id'])&&$data->user['id']!==0){
-		common_redirect_local($data,'');
+		common_loadPhrases($data,$db,'users');
+		$data->output['responseMessage']=$data->phrases['users']['cantLoggedIn'];
+		return FALSE;
 	}
 	if(!empty($data->action[3])){
 		setcookie($db->sessionPrefix.'from',$data->action[3],time()+3600*72,$data->linkHome);
@@ -71,7 +73,6 @@ function users_afterForm($data,$db){
 			':userAgent' => $_SERVER['HTTP_USER_AGENT']
 		));
 		if(!empty($_COOKIE[$db->sessionPrefix.'from'])){
-			setcookie($db->sessionPrefix.'from','',time()-3600,$data->linkHome,'','',true);
 			common_redirect_local($data,$_COOKIE[$db->sessionPrefix.'from']);
 		}
 		return TRUE;
