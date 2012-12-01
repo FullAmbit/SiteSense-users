@@ -149,6 +149,14 @@ function admin_users_addQueries() {
 			DELETE FROM !prefix!user_permissions
 			WHERE userID = :userID
 		',
+		'deleteUserFromUserSessions' => '
+			DELETE FROM !prefix!sessions
+			WHERE userId = :userId
+		',
+		'deleteUserFromDynamicFields' => '
+			DELETE FROM !prefix!users_dynamic_fields
+			WHERE userId = :userId
+		',
         'getAllGroups' => '
 			SELECT DISTINCT groupName
 			FROM !prefix!user_group_permissions

@@ -52,7 +52,16 @@ function admin_usersBuild($data,$db) {
                     $statement->execute(array(
                         ':userID' => $data->action[3]
                     ));
-
+					// Delete user sessions, just to be safe
+					$statement=$db->prepare('deleteUserFromSessions','admin_users');
+                    $statement->execute(array(
+                        ':userId' => $data->action[3]
+                    ));
+					// Delete user dynamic fields, just to be safe
+					$statement=$db->prepare('deleteUserFromDynamicFields','admin_users');
+                    $statement->execute(array(
+                        ':userId' => $data->action[3]
+                    ));
 					$data->output['deleteCount']=$qHandle->rowCount();
 					if ($data->output['deleteCount']>0) {
 						$data->output['delete']='deleted';
