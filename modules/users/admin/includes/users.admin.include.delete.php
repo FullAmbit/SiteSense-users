@@ -53,7 +53,7 @@ function admin_usersBuild($data,$db) {
                         ':userID' => $data->action[3]
                     ));
 					// Delete user sessions, just to be safe
-					$statement=$db->prepare('deleteUserFromSessions','admin_users');
+					$statement=$db->prepare('deleteUserFromUserSessions','admin_users');
                     $statement->execute(array(
                         ':userId' => $data->action[3]
                     ));
