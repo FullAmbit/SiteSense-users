@@ -174,29 +174,13 @@ function admin_usersBuild($data, $db) {
 			foreach ($submittedGroups as $groupName => $value) {
 				// Add expiration dropdown box to the current time stamp
 				$expires=0;
-				$dropdown=$submittedGroups[$groupName]['expires'];
+				$dropdown=strtolower($value['expires']);
 				switch ($dropdown) {
-				case 'No change':
-				case 'Never':
+				case -1:
 					$expires=0;
 					break;
-				case '15 minutes':
-					$expires=900;
-					break;
-				case '1 hour':
-					$expires=3600;
-					break;
-				case '2 hours':
-					$expires=7200;
-					break;
-				case '1 day':
-					$expires=86400;
-					break;
-				case '2 days':
-					$expires=172800;
-					break;
-				case '1 week':
-					$expires=604800;
+				default:
+					$expires=intval($dropdown);
 					break;
 				}
 				if ($expires==0) {
@@ -210,7 +194,7 @@ function admin_usersBuild($data, $db) {
 					$statement->execute(array(
 							':userID'          => $userID[0]['id'],
 							':groupName'       => $groupName,
-							':expires'         => $expires
+							':expires'         => $expires,
 						));
 				}
 			}

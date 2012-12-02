@@ -212,23 +212,22 @@ foreach($data->output['groupList'] as $value) {
             'label' => $data->phrases['users']['labelAddEditExpires'],
             'tag' => 'span',
             'value' => $expires,
-
         );
         $this->fields[$value['groupName'].'_update']=array(
             'label'   => $data->phrases['users']['labelAddEditUpdateExpiration'],
             'tag'     => 'select',
             'group'   => $data->phrases['users']['userGroupsHeading'],
             'options' => array(
-                $data->phrases['users']['optionUpdateExpirationNoChange'],
-                $data->phrases['users']['optionUpdateExpirationNever'],
-                $data->phrases['users']['optionUpdateExpiration15Min'],
-                $data->phrases['users']['optionUpdateExpiration1Hr'],
-                $data->phrases['users']['optionUpdateExpiration2Hr'],
-                $data->phrases['users']['optionUpdateExpiration1Day'],
-                $data->phrases['users']['optionUpdateExpiration2Day'],
-                $data->phrases['users']['optionUpdateExpiration1Week'],
+                array('text'=>$data->phrases['users']['optionUpdateExpirationNoChange'],'value'=>-1),
+                array('text'=>$data->phrases['users']['optionUpdateExpirationNever'],'value'=>0),
+                array('text'=>$data->phrases['users']['optionUpdateExpiration15Min'],'value'=>900),
+                array('text'=>$data->phrases['users']['optionUpdateExpiration1Hr'],'value'=>3600),
+                array('text'=>$data->phrases['users']['optionUpdateExpiration2Hr'],'value'=>7200),
+                array('text'=>$data->phrases['users']['optionUpdateExpiration1Day'],'value'=>86400),
+                array('text'=>$data->phrases['users']['optionUpdateExpiration2Day'],'value'=>172800),
+                array('text'=>$data->phrases['users']['optionUpdateExpiration1Week'],'value'=>604800),
             ),
-            'value'   => $data->phrases['users']['optionUpdateExpirationNoChange']
+			'value'    => -1
         );
         $state = (!isset($data->output['userForm']['permissions']['manageGroups'][$value['groupName']]['value'])) ? '0' : $data->output['userForm']['permissions']['manageGroups'][$value['groupName']]['value'];
         $this->fields['manageGroups_'.$value['groupName']]=array(

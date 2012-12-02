@@ -264,30 +264,12 @@ function admin_usersBuild($data,$db) {
                         break;
                     }
                 }
-                switch($data->output['userForm']->sendArray[':'.$value['groupName'].'_update']) {
-                    case 'No change':
-                        $expires='No change';
+                switch(strtolower($data->output['userForm']->sendArray[':'.$value['groupName'].'_update'])) {
+                    case -1:
+                        $expires=$data->phrases['users']['optionUpdateExpirationNoChange'];
                         break;
-                    case 'Never':
-                        $expires=0;
-                        break;
-                    case '15 minutes':
-                        $expires=900;
-                        break;
-                    case '1 hour':
-                        $expires=3600;
-                        break;
-                    case '2 hours':
-                        $expires=7200;
-                        break;
-                    case '1 day':
-                        $expires=86400;
-                        break;
-                    case '2 days':
-                        $expires=172800;
-                        break;
-                    case '1 week':
-                        $expires=604800;
+                    default:
+                        $expires=intval($data->output['userForm']->sendArray[':'.$value['groupName'].'_update']);
                         break;
                 }
                 // Check To See If You Are Allowed To Manage MemberShip of this group
@@ -307,7 +289,7 @@ function admin_usersBuild($data,$db) {
                     if($data->output['userForm']->sendArray[':'.$value['groupName']]) {
                         // User is still a member
                         // Check to see if expiration has changed
-                        if($expires!=='No change') {
+                        if($expires!==$data->phrases['users']['optionUpdateExpirationNoChange']) {
                             if($expires==0) {
                                 $statement=$db->prepare('updateExpirationInPermissionGroupNoExpires');
                                 $statement->execute(array(
