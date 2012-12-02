@@ -158,11 +158,13 @@ function users_buildContent($data,$db) {
             }
 			break; // case 'register'
 		case 'logout':
-			setcookie($db->sessionPrefix.'SESSID', '', 0, $data->linkHome);
-			$statement=$db->prepare('logoutSession');
-			$statement->execute(array(
-				':sessionID' => $_COOKIE[$db->sessionPrefix.'SESSID']
-		    ));
+			if(isset($_COOKIE[$db->sessionPrefix.'SESSID'])){
+				setcookie($db->sessionPrefix.'SESSID', '', 0, $data->linkHome);
+				$statement=$db->prepare('logoutSession');
+				$statement->execute(array(
+					':sessionID' => $_COOKIE[$db->sessionPrefix.'SESSID']
+				));
+			}
 			break;
 	}
 }
