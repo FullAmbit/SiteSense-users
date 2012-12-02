@@ -158,7 +158,6 @@ function admin_usersBuild($data,$db) {
 		foreach ($data->output['userForm']->fields as $key => $value) {
            switch ($key) {
                 case 'lastAccess':
-					var_dump($item[$key]);
                     $data->output['userForm']->fields[$key]['value']=(
                     ($item[$key]==0) ?
                         'never' :
