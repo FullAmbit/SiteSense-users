@@ -149,7 +149,6 @@ function admin_usersBuild($data,$db) {
     ));
 	$data->output['userFields']=$statement->fetchAll(PDO::FETCH_ASSOC);
     $data->output['userForm']=$form=new formHandler('addEdit',$data,true);
-
     $statement=$db->prepare('getById','admin_users');
     $statement->execute(array(
         ':id' => $data->action[3]
@@ -159,6 +158,7 @@ function admin_usersBuild($data,$db) {
 		foreach ($data->output['userForm']->fields as $key => $value) {
            switch ($key) {
                 case 'lastAccess':
+					var_dump($item[$key]);
                     $data->output['userForm']->fields[$key]['value']=(
                     ($item[$key]==0) ?
                         'never' :

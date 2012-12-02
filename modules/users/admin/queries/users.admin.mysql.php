@@ -32,7 +32,7 @@ function admin_users_addQueries() {
 			SELECT *,UNIX_TIMESTAMP(CONCAT(lastAccess,"+00:00")) AS lastAccess FROM !prefix!users ORDER BY id ASC
 		',
 		'getById' => '
-			SELECT *,UNIX_TIMESTAMP(CONCAT(lastAccess,"+00:00")) AS lastAccess FROM !prefix!users
+			SELECT * FROM !prefix!users
 			WHERE id = :id
 		',
 		'checkUserName' => '
