@@ -24,28 +24,20 @@
 */
 common_include('libraries/forms.php');
 function populateTimeZones($data) {
-    $currentTime=time();
-    $times=array();
-    $start=$currentTime-date('G',$currentTime)*3600;
-    for($i=0;$i<24*60;$i+=15) {
-        $times[date('g:i A',$start+$i*60)]=array();
-    }
-    $timezones=DateTimeZone::listIdentifiers();
-    foreach($timezones AS $timezone) {
-        $dt=new DateTime('@'.$currentTime);
-        $dt->setTimeZone(new DateTimeZone($timezone));
-        $time=$dt->format('g:i A');
-        $times[$time][]=$timezone;
-    }
-    $timeZones=array_filter($times);
-    foreach($timeZones as $time => $timeZoneList) {
-        foreach($timeZoneList as $timeZone) {
-            $data->output['timeZones'][]=array(
-                'text'  => $time.' - '.$timeZone,
-                'value' => $timeZone
-            );
-        }
-    }
+	$abbrs=DateTimeZone::listIdentifiers();
+	$abbrsCalc=array();
+	foreach($abbrs as $abbr){
+		$tzObject=new DateTimeZone($abbr);
+		$date=new DateTime(NULL,$tzObject);
+		$abbrsCalc[$abbr]=$date->format('g:i A');
+	}
+	natsort($abbrsCalc);
+	foreach($abbrsCalc as $identifier => $time){
+		$data->output['timeZones'][]=array(
+			'text' => $time.' - '.$identifier,
+			'value'=> $identifier
+		);
+	}
 }
 function checkUserName($name,$db) {
 	$statement=$db->prepare('checkUserName','admin_users');

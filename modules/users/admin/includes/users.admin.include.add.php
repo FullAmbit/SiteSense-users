@@ -23,34 +23,22 @@
 * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 */
 common_include('libraries/forms.php');
-// Copyright (C) 2012 Nathan Wong
-// See 'acknowledgment.txt' for more details
 function populateTimeZones($data) {
-	$currentTime=time();
-	$times=array();
-	$start=$currentTime-date('G', $currentTime)*3600;
-	for ($i=0;$i<24*60;$i+=15) {
-		$times[date('g:i A', $start+$i*60)]=array();
+	$abbrs=DateTimeZone::listIdentifiers();
+	$abbrsCalc=array();
+	foreach($abbrs as $abbr){
+		$tzObject=new DateTimeZone($abbr);
+		$date=new DateTime(NULL,$tzObject);
+		$abbrsCalc[$abbr]=$date->format('g:i A');
 	}
-	$timezones=DateTimeZone::listIdentifiers();
-	foreach ($timezones as $timezone) {
-		$dt=new DateTime('@'.$currentTime);
-		$dt->setTimeZone(new DateTimeZone($timezone));
-		$time=$dt->format('g:i A');
-		$times[$time][]=$timezone;
-	}
-	$timeZones=array_filter($times);
-	foreach ($timeZones as $time => $timeZoneList) {
-		foreach ($timeZoneList as $timeZone) {
-			$data->output['timeZones'][]=array(
-				'text'  => $time.' - '.$timeZone,
-				'value' => $timeZone
-			);
-		}
+	natsort($abbrsCalc);
+	foreach($abbrsCalc as $identifier => $time){
+		$data->output['timeZones'][]=array(
+			'text' => $time.' - '.$identifier,
+			'value'=> $identifier
+		);
 	}
 }
-// End Credit
-
 function checkUserName($name, $db) {
 	$statement=$db->prepare('checkUserName', 'admin_users');
 	$statement->execute(array(
