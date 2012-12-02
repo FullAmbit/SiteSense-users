@@ -154,7 +154,7 @@ function users_afterForm($data,$db){
 		));
 	}
 	// Insert into group
-	if($data->settings['defaultGroup']!==0) {
+	if(!empty($data->settings['defaultGroup'])) {
 		$statement=$db->prepare('addUserToPermissionGroupNoExpires');
 		$statement->execute(array(
 			':userID'          => $userItem['id'],
